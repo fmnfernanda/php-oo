@@ -1,6 +1,5 @@
 <?php
 
-
 class Animal {
 
 	public $especie = '';
@@ -26,6 +25,7 @@ class Animal {
 		$str .= "Fome: $this->fome\n";
 		return $str;
 
+	
 
 	}
 
@@ -33,10 +33,10 @@ class Animal {
 
 	
 $bulldog = new Animal('Bulldog', 18, 25, 2);
-echo $bulldog->toHTML();
+echo $bulldog;
 
 echo PHP_EOL;
 
 $dashround = new Animal('Dashround', 7, 27, 15);
-echo $dashround->toHTML();
+echo $dashround;
 
