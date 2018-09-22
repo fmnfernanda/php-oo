@@ -1,19 +1,26 @@
 <?php
 
+spl_autoload_register(function($class){
+    require "classes/$class.class.php";
+});
+
 $config = parse_ini_file('config.ini');
 
 $config['title'] = 'Blog';
 $config['footer'] = 'Meu Blog - {ANO} - Todos os direitos reservados &#169;';
 
-$sqlite = new SQLite3($config['sqlite']);
-$topicos = $sqlite->query('SELECT id, titulo, categoria FROM topicos');
 
-$res = $sqlite->query('SELECT id, titulo, categoria, texto, data FROM topicos WHERE id = ' . (int) $_GET['id']);
-$topico = $res->fetchArray(SQLITE3_ASSOC);
+$topicos = Topico ::getAll();
 
-$topico_data = date('d/m/Y', $topico['data']);
+$topico = Topico ::get(['id'=> (int)$_GET['id']])[0]; 
 
-$title = $config['title'] . ' - ' . $topico['titulo'];
+//$sqlite = new SQLite3($config['sqlite']);
+//$res = $sqlite->query('SELECT id, titulo, categoria, texto, data FROM topicos WHERE id = ' . (int) $_GET['id']);
+//$topico2 = $res->fetchArray(SQLITE3_ASSOC);
+
+$topico_data = date('d/m/Y', $topico->data);
+
+$title = $config['title'] . ' - ' . $topico->titulo;
 $footer = str_replace('{ANO}', date('Y'), $config['footer']);
 
 ?>
@@ -31,14 +38,14 @@ $footer = str_replace('{ANO}', date('Y'), $config['footer']);
         <nav>
             <ul>
                 <li><a href="index.php">Home</a></li>
-                <?php while($rs = $topicos->fetchArray(SQLITE3_ASSOC)): ?>
-                <li><a href="topico.php?id=<?=$rs['id']?>"><?=$rs['titulo']?></a></li>
-                <?php endwhile; ?>
+                <?php foreach ($topicos as $t): ?>
+                <li><a href="topico.php?id=<?=$topico->id?>"><?=$t->titulo?></a></li>
+                <?php endforeach; ?>
             </ul>
         </nav>
         <main>
-            <h2><?=$topico['titulo']?></h2>
-            <?=$topico['texto']?>
+            <h2><?=$topico->titulo?></h2>
+            <?=$topico->texto?>
             <span><?=$topico_data?></span>
         </main>
         <footer>

@@ -13,6 +13,27 @@ class Registro{
 	
 	}
 
+	public static function get($inf) {
+			$campos = '';
+				
+		foreach($inf as $property => $value)
+			$campos .="$property = '$value' AND ";
+				
+		$campos = substr($campos, 0, -5);
+				
+		$class = strtolower(get_called_class());
+		$sqlite = Database::connect();
+		$res = $sqlite->query("SELECT * FROM {$class}s WHERE $campos");
+		$objetos = [];
+		while($rs = $res->fetchArray(SQLITE3_ASSOC)){
+			$objetos[] = new $class($rs);
+		}
+		return $objetos;
+
+
+
+	}
+
 	public static function getAll() {
 		
 		$class = get_called_class();
