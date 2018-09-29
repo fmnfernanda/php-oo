@@ -3,7 +3,7 @@
 class Biblia{
 
     private static $livros = ['Genesis', 'Exodo', 'Levitico', 'Numeros', 'Deuteronomio'];
-    private $livro, $capitulo, $versiculo;
+    private $livro, $capitulo, $versiculo, $versao;
 
     public function __construct($l, $c, $v){
      $this->setLivro($l);
@@ -12,12 +12,41 @@ class Biblia{
 
 }
 
-public function getLivro(){
+public function __destruct(){
 
-    return $this->livro;
+    echo "A Biblia com o livro $this->livro foi destruida";
 }
 
-public function setLivro($livro){
+public function __get($p){
+    return $this->$p;
+}
+
+public function __set($p, $v){
+    if(!in_array($p, array_keys(get_object_vars($this))))
+       throw new Exception("Propreidade $p inexistente");
+    $method = 'set' . ucfirst($p);
+     if(method_exists($his, $method))
+        $this->$method($v);
+     else
+        $this->$p;      
+}
+
+/*public function __set($p, $v){
+
+    if($p == 'livro')
+        $this->setLivro($v);
+    else if($p == 'versiculo')
+            $this->setVersiculo($v);
+    else if ($p == 'capitulo')
+         $this->setCapitulo($v);
+    else
+        throw new Exception("Propreidade $p inexistente");
+        
+}*/
+
+
+
+private function setLivro($livro){
 
     if(in_array($livro, self::$livros ))
         $this->livro = $livro;
@@ -26,22 +55,12 @@ public function setLivro($livro){
         
 }
 
-public function getCapitulo(){
-
-    return $this->capitulo;
-}
-
 public function setCapitulo($capitulo){
 
     if(!is_numeric($capitulo))
         throw new Exception('Capitulo deve ser numerico!');
         $this->capitulo = (int)$capitulo; 
                 
-}
-
-public function getVersiculo(){
-
-    return $this->versiculo;
 }
 
 public function setVersiculo($versiculo){
@@ -56,9 +75,9 @@ public function setVersiculo($versiculo){
 
 
 try{
-    $biblia = new Biblia('Deuteronomio', 1, 8);
-    echo $biblia->getLivro();
+    $biblia = new Biblia('Genesis', 1, 8);
+    echo $biblia->livro;
    }
-   catch (Exception $e){
+catch (Exception $e){
     echo $e->getMessage();
    } 

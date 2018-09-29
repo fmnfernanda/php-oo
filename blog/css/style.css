@@ -18,6 +18,22 @@ header {
     color: #ffffff;
 }
 
+header span {
+    position: absolute;
+    top: 35px;
+    right: 20px;
+}
+
+header span a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+header span a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
 nav {
     width: 10%;
     float:left;
@@ -64,4 +80,12 @@ footer {
     clear:both;
     font-size: 0.8em;
     text-align:center;
+}
+
+.error {
+	color: red;
+}
+
+.success {
+    color: green;
 }
