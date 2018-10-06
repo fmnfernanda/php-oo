@@ -1,5 +1,6 @@
 <?php
 
+
 require 'main.php';
 
 if(!isset($_SESSION['auth'])) {
@@ -22,6 +23,8 @@ if(isset($_POST['cadastrar'])) {
     if(!$errors) {
         $valores ['data'] = time();
         $topico = new Topico ($valores);
+        assert($topico->titulo == $_POST['titulo'] . 'erro');
+        assert($sqlite);
         $topico->save();
         header('Location: admin.php?success');
         exit;

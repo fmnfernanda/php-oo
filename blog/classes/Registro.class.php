@@ -2,6 +2,8 @@
 
 class Registro{
 
+	use Metodos;
+
 	public $id = 0;
 		
 
@@ -12,6 +14,7 @@ class Registro{
 		}
 	
 	}
+
 
 	public static function get($inf) {
 			$campos = '';

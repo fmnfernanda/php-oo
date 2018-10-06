@@ -1,83 +1,83 @@
 <?php
 
-class Biblia{
+class Biblia {
 
-    private static $livros = ['Genesis', 'Exodo', 'Levitico', 'Numeros', 'Deuteronomio'];
-    private $livro, $capitulo, $versiculo, $versao;
+    public $livros;
 
-    public function __construct($l, $c, $v){
-     $this->setLivro($l);
-     $this->setCapitulo($c);
-     $this->setVersiculo($v);
+    public function __construct($file) {
+        $livros = json_decode(file_get_contents($file));
+        foreach($livros as $numero => $livro) {
+            $this->{$livro->abbrev} = new Livro($livro->name, $numero + 1, $livro->chapters);
+        }
+    }
 
 }
 
-public function __destruct(){
+class Livro {
+    
+    public $nome, $numero, $capitulos;
+    
+    public function __construct($nome, $numero, $capitulos) {
+        $this->nome = $nome;
+        $this->numero = $numero;
+        $this->capitulos = [];
+        foreach($capitulos as $numero => $versiculos) {
+             $this->capitulos[] = new Capitulo($numero + 1, gzcompress(json_encode($versiculos)));
+             //$this->capitulos[] = gzcompress(json_encode($versiculos));                
 
-    echo "A Biblia com o livro $this->livro foi destruida";
+        }
+    }
+
 }
 
-public function __get($p){
-    return $this->$p;
-}
+class Capitulo {
 
-public function __set($p, $v){
-    if(!in_array($p, array_keys(get_object_vars($this))))
-       throw new Exception("Propreidade $p inexistente");
-    $method = 'set' . ucfirst($p);
-     if(method_exists($his, $method))
-        $this->$method($v);
-     else
-        $this->$p;      
-}
-
-/*public function __set($p, $v){
-
-    if($p == 'livro')
-        $this->setLivro($v);
-    else if($p == 'versiculo')
-            $this->setVersiculo($v);
-    else if ($p == 'capitulo')
-         $this->setCapitulo($v);
-    else
-        throw new Exception("Propreidade $p inexistente");
+    public $numero, $versiculos;
+    
+    public function __construct($numero, $versiculos) {
+        $this->numero = $numero;
+        $this->versiculos = new Versiculo ($versiculos);
         
-}*/
+    }
 
-
-
-private function setLivro($livro){
-
-    if(in_array($livro, self::$livros ))
-        $this->livro = $livro;
-    else
-        throw new Exception('Livro inexistente no pentateuco!');
-        
-}
-
-public function setCapitulo($capitulo){
-
-    if(!is_numeric($capitulo))
-        throw new Exception('Capitulo deve ser numerico!');
-        $this->capitulo = (int)$capitulo; 
-                
-}
-
-public function setVersiculo($versiculo){
-
-    if(!is_numeric($versiculo))
-        throw new Exception('Versiculo deve ser numerico!');
-        $this->versiculo = (int)$versiculo; 
-                
-}
+    
 
 }
 
+class Versiculo implements ArrayAccess, Countable {
 
-try{
-    $biblia = new Biblia('Genesis', 1, 8);
-    echo $biblia->livro;
-   }
-catch (Exception $e){
-    echo $e->getMessage();
-   } 
+    public $numero, $texto;
+    private $gzip, $versiculos;
+
+
+    public function __construct($gzip) {
+        $this->gzip = $gzip;
+    }
+
+    public function count (){
+        if(!$this->versiculos)
+            $this->versiculos = json_decode(gzuncompress($this->gzip));
+        return count($this->versiculos);
+    }
+
+    public function offsetSet($indice, $valor){}
+
+    public function offsetGet($indice){
+        if(!$this->versiculos)
+            $this->versiculos = json_decode(gzuncompress($this->gzip));
+        return $this->versiculos[$indice];
+    }
+
+    public function offsetUnset($indice){}
+
+    public function offsetExists($indice){}
+
+}
+
+
+
+//$biblia = new Biblia('biblia.json');
+//echo count ($biblia->gn->capitulos[0]->versiculos);
+//echo '<br />';
+//print_r($biblia->gn->capitulos[0]->versiculos[13]);
+//exit;

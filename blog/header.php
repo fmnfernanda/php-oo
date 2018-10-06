@@ -2,10 +2,11 @@
 
 
 
+
 $title = $config['title'] . $title;
 
-
 $topicos = Topico::getAll();
+
 
 ?>
 <!DOCTYPE html>
